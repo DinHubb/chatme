@@ -20,6 +20,7 @@ export default {
         link: "#34aaf2",
         hgray: "#F5F5F5",
         brcolor: "#dfe1e5",
+        hvBrcolor: "#c4c9cc",
         messageBg: "#e3fee0",
       },
     },

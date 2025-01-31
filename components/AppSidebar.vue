@@ -1,10 +1,13 @@
 <script setup lang="ts">
-const props = defineProps<{
-  users: any;
-  selectedChat: boolean;
-}>();
+import type { Message, UserChat, Chat, UserInfo } from "~/types/types";
 
-const route = useRoute();
+const props = defineProps<{
+  chatRooms: Chat[];
+  currentChat: UserChat | undefined;
+}>();
+const emit = defineEmits(["select-chat"]);
+const { toLocaleTime } = useToLocaleTime();
+const { createRipple } = useRipple();
 </script>
 <template>
   <div
@@ -17,23 +20,26 @@ const route = useRoute();
       </div>
     </div>
     <ul class="flex flex-col w-full p-2 max-h-[calc(100vh-50px)] overflow-auto">
-      <li v-for="user in users" class="flex">
+      <li
+        v-for="chat in chatRooms"
+        class="flex relative overflow-hidden"
+        @click="createRipple"
+      >
         <NuxtLink
-          class="w-full p-2 rounded-xl active:bg-darkTg transition-all duration-200 ease-out"
-          :to="`/#${user.user_id}`"
-          @click="$emit('select-chat', user)"
+          class="w-full p-2 rounded-xl"
+          :to="`#${chat.id}`"
+          :data-peer-id="chat.id"
+          @click="emit('select-chat', chat)"
           :class="[
-            user.user_id === route.hash.replace(/#/, '')
-              ? 'bg-tg'
-              : 'hover:bg-hgray',
+            currentChat?.sub === chat.user.sub ? 'bg-tg' : 'hover:bg-hgray',
           ]"
         >
           <div class="flex items-center space-x-4">
             <div
-              class="relative shadow bg-none w-12 h-12 min-w-12 min-h-12 rounded-full overflow-hidden"
+              class="relative shadow bg-none w-[3.375rem] h-[3.375rem] min-w-[3.375rem] min-h-[3.375rem] rounded-full overflow-hidden"
             >
               <img
-                :src="user.img"
+                :src="chat.user.avatar"
                 alt=""
                 class="object-contain min-w-full min-h-full w-full h-full bg-white"
               />
@@ -44,27 +50,31 @@ const route = useRoute();
                   class="text-primary font-medium text-base"
                   :class="{
                     'text-white font-normal':
-                      user.user_id === route.hash.replace(/#/, ''),
+                      currentChat?.sub === chat.user.sub,
                   }"
                 >
-                  {{ user.name }}
+                  {{ chat.user.fullName }}
                 </h4>
                 <p
-                  class="text-sm text-secondary"
+                  class="text-sm text-secondary mt-1"
                   :class="{
-                    'text-white': user.user_id === route.hash.replace(/#/, ''),
+                    'text-white': currentChat?.sub === chat.user.sub,
                   }"
                 >
-                  {{ user.messages[user.messages.length - 1].text }}
+                  {{ chat.messages[chat.messages.length - 1].message }}
                 </p>
               </div>
               <p
                 class="text-xs text-secondary"
                 :class="{
-                  'text-white': user.user_id === route.hash.replace(/#/, ''),
+                  'text-white': currentChat?.sub === chat.user.sub,
                 }"
               >
-                {{ user.lastDiscussion }}
+                {{
+                  toLocaleTime(
+                    chat.messages[chat.messages.length - 1].createdAt
+                  )
+                }}
               </p>
             </div>
           </div>

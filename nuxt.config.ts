@@ -14,14 +14,31 @@ export default defineNuxtConfig({
 
   ssr: false,
 
-  modules: ["@formkit/nuxt", "nuxt-headlessui"],
+  modules: ["@formkit/nuxt", "nuxt-headlessui", "@pinia/nuxt"],
 
   formkit: {
     configFile: "./formkit.config.ts",
     autoImport: true,
   },
+
   headlessui: {
     prefix: "Headless",
+  },
+
+  pinia: {
+    storesDirs: ["./stores/**", "./custom-folder/stores/**"],
+  },
+
+  components: {
+    dirs: [
+      {
+        path: "~/components/ui",
+        prefix: "UI",
+      },
+      {
+        path: "~/components",
+      },
+    ],
   },
 
   css: ["~/assets/css/main.css"],

@@ -6,6 +6,7 @@
   html {
     height: 100%;
     overflow: hidden;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   }
 
   body {
@@ -20,5 +21,23 @@
 @layer components {
   .__container {
     @apply mx-auto 2xl:max-w-[1600px];
+  }
+}
+input {
+  -webkit-appearance: none;
+  outline: none;
+}
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.08);
+  transform: scale(0);
+  animation: ripple-animation 0.45s linear;
+}
+
+@keyframes ripple-animation {
+  to {
+    transform: scale(2);
+    opacity: 0;
   }
 }

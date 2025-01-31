@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { FaceSmileIcon } from "@heroicons/vue/24/outline";
+import type { Message } from "~/types/types";
+
+const props = defineProps<{
+  message: Message;
+}>();
 </script>
 <template>
   <div class="w-full relative">
     <div
-      class="relative a px-2 bg-white shadow min-h-[54px] h-[54px] rounded-2xl py-1 flex items-center"
+      class="relative a px-2 bg-white shadow min-h-[54px] h-[54px] rounded-2xl rounded-br-none py-1 flex items-center"
     >
       <button
         class="flex justify-center items-center min-w-9 min-h-9 w-9 h-9 fill-secondary transition-all duration-200 ease-out hover:bg-hgray rounded-full"
@@ -12,12 +17,16 @@ import { FaceSmileIcon } from "@heroicons/vue/24/outline";
         <FaceSmileIcon class="w-7 h-7 stroke-secondary" />
       </button>
       <input
+        v-model="message.message"
         type="text"
-        class="w-full bg-transparent focus:outline-none px-2 caret-tg"
+        class="w-full placeholder:pl-0.5 bg-transparent focus:outline-none px-2 caret-tg"
         placeholder="Message"
         name=""
         id=""
       />
+      <div class="absolute right-[-10.4px] bottom-0">
+        <IconShapeMessage />
+      </div>
       <button
         class="flex justify-center items-center min-w-9 min-h-9 w-9 h-9 fill-secondary transition-all duration-200 ease-out hover:bg-hgray rounded-full"
       >
