@@ -4,13 +4,14 @@ export type User = {
 };
 
 export type loginCredentials = {
-  msisdn: string;
+  login: string;
   password: string;
 };
 
 export type registerCredentials = {
-  name: string;
-  msisdn: string;
+  username: string;
+  email: string;
+  password: string;
 };
 
 // Value is initialized in: ~/plugins/auth.ts
@@ -33,13 +34,17 @@ export const useAuth = () => {
   async function login(credentials: loginCredentials) {
     if (isLoggedIn.value) return;
 
-    await $jwtFetch("/auth/login", { method: "POST", body: credentials });
+    await $jwtFetch("/auth/login", {
+      method: "POST",
+      credentials: "include",
+      body: credentials,
+    });
 
     await refresh();
   }
 
   async function register(credentials: registerCredentials) {
-    await $jwtFetch("/auth/reset-password", {
+    await $jwtFetch("/auth/register", {
       method: "POST",
       body: credentials,
     });
@@ -65,7 +70,12 @@ export const useAuth = () => {
 };
 
 export const fetchCurrentUser = async () => {
-  return await $jwtFetch<User>("/auth/me", {
-    redirectIfNotAuthenticated: false,
-  });
+  try {
+    return await $jwtFetch("/auth/me", {
+      credentials: "include",
+    });
+  } catch (error: any) {
+    console.error(error.response.statusText);
+    if ([401, 419].includes(error?.response?.status)) return null;
+  }
 };
