@@ -41,3 +41,10 @@ export interface UserInfo {
   showFindFriends: boolean;
   currentChat: Chat | null;
 }
+
+export interface Form {
+  login?: string;
+  username?: string;
+  email?: string;
+  password: string;
+}

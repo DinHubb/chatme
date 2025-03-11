@@ -13,7 +13,7 @@ export default {
     extend: {
       colors: {
         primary: "#011627",
-        secondary: "#707991",
+        secondary: "#707579",
         tg: "#3390ec",
         darkTg:
           "hsl(209.83783783783787, 82.95964125560539%, 52.27450980392157%)",
@@ -22,6 +22,8 @@ export default {
         brcolor: "#dfe1e5",
         hvBrcolor: "#c4c9cc",
         messageBg: "#e3fee0",
+        darkBg: "#181818",
+        primaryIndigo: "rgb(135,116,225)",
       },
     },
   },

@@ -1,8 +1,5 @@
-import { defineFormKitConfig } from "@formkit/vue";
-import { rootClasses } from "./formkit.theme";
+import { defineFormKitConfig, type DefaultConfigOptions } from "@formkit/vue";
 
-export default defineFormKitConfig({
-  config: {
-    rootClasses,
-  },
-});
+const config: DefaultConfigOptions = {};
+
+export default config;

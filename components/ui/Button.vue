@@ -14,6 +14,5 @@ const { createRipple } = useRipple();
     @click="createRipple"
   >
     <slot></slot>
-    <div class="rounded-full absolute z-10 w-full h-full inset-0"></div>
   </button>
 </template>
