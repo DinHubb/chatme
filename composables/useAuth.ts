@@ -1,8 +1,3 @@
-export type User = {
-  name: string;
-  login?: string;
-};
-
 export type loginCredentials = {
   login: string;
   password: string;
@@ -14,29 +9,29 @@ export type registerCredentials = {
   password: string;
 };
 
-// Value is initialized in: ~/plugins/auth.ts
-export const useUser = () => {
-  return useState<User | undefined | null>("user", () => undefined);
-};
-
 export const useAuth = () => {
-  const user = useUser();
-  const isLoggedIn = computed(() => !!user.value);
+  const storeUser = useUserStore();
+  const router = useRouter();
 
   async function refresh() {
     try {
-      user.value = await fetchCurrentUser();
+      const response = await $jwtFetch("/auth/me", {
+        method: "GET",
+      });
+
+      if (response) {
+        storeUser.setUser(response);
+      }
     } catch (error: any) {
-      user.value = null;
+      storeUser.clearUser();
     }
   }
 
   async function login(credentials: loginCredentials) {
-    if (isLoggedIn.value) return;
+    if (storeUser.isLoggedIn) return;
 
     await $jwtFetch("/auth/login", {
       method: "POST",
-      credentials: "include",
       body: credentials,
     });
 
@@ -52,30 +47,15 @@ export const useAuth = () => {
     await refresh();
   }
 
-  async function logout() {
-    if (!isLoggedIn.value) return;
-
-    await $jwtFetch("/auth/logout", { method: "post" });
-    user.value = null;
+  function logout() {
+    storeUser.clearUser();
+    router.push("/login");
   }
 
   return {
-    user,
-    isLoggedIn,
     register,
     login,
-    logout,
     refresh,
+    logout,
   };
-};
-
-export const fetchCurrentUser = async () => {
-  try {
-    return await $jwtFetch("/auth/me", {
-      credentials: "include",
-    });
-  } catch (error: any) {
-    console.error(error.response.statusText);
-    if ([401, 419].includes(error?.response?.status)) return null;
-  }
 };

@@ -34,7 +34,7 @@ input {
 
 @keyframes ripple-animation {
   to {
-    transform: scale(2);
+    transform: scale(4);
     opacity: 0;
   }
 }

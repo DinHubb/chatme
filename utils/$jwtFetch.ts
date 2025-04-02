@@ -32,6 +32,7 @@ export const $jwtFetch = $fetch.create({
 
   async onResponseError({ response }) {
     const status = response.status;
+
     if ([500].includes(status)) {
       console.error("Server error", response.statusText, response._data);
     }

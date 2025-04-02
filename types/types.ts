@@ -19,19 +19,19 @@ export interface Chat {
   user: UserChat;
 }
 
-export interface Users {
+export interface User {
   sub: string;
   fullName: string;
   avatar: string;
 }
 
 export interface UserInfo {
-  id: number;
+  id: number | null;
   sub: string;
   avatar: string;
   fullName: string;
   chats: Chat[];
-  allUsers: Users[];
+  allUsers: User[];
   userDataForChat: {
     id: string;
     sub1: string;
