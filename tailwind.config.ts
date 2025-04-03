@@ -24,6 +24,8 @@ export default {
         messageBg: "#e3fee0",
         darkBg: "#181818",
         primaryIndigo: "rgb(135,116,225)",
+        lightSecond: "rgba(112, 117, 121, 0.08)",
+        bgColor: "#f4f4f5",
       },
     },
   },

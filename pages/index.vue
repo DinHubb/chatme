@@ -55,11 +55,11 @@ const store = useUserStore();
 
 const { user } = storeToRefs(store);
 
-onMounted(() => {
-  store.findChat();
-});
+onMounted(() => {});
 
 const handleSelectChat = (event: Chat) => {
+  if (!user.value) return;
+
   user.value.currentChat = event;
 };
 </script>
@@ -68,14 +68,15 @@ const handleSelectChat = (event: Chat) => {
   <div class="__container min-h-full h-full">
     <div class="flex min-h-full h-full border border-brcolor">
       <AppSidebar
+        :user="user"
         :chatRooms="user.chats"
         :currentChat="user.currentChat?.user"
         @selectChat="handleSelectChat"
       />
-      <div class="overflow-hidden flex-1 relative flex flex-col pb-5">
+      <main class="overflow-hidden flex-1 relative flex flex-col pb-5">
         <UIBackgroundChat />
-        <AppChat v-if="user.currentChat" :chat="user.currentChat" />
-      </div>
+        <AppChat v-if="user?.currentChat" :chat="user?.currentChat" />
+      </main>
     </div>
   </div>
 </template>
