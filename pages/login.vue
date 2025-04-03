@@ -44,7 +44,7 @@ const { submit, inProgress, ValidationErrors, error } = useSubmit(
             label: 'text-secondary font-light ',
             input:
               'rounded-lg border border-hgrey caret-tg transition-all duration-200 easy-out w-full h-10 p-2 mt-1 focus:border-tg hover:border-tg',
-            message: 'font-normal text-red-600 text-sm',
+            message: 'mt-1 font-normal text-red-600 text-sm',
           }"
         />
         <FormKit
@@ -58,7 +58,7 @@ const { submit, inProgress, ValidationErrors, error } = useSubmit(
             label: 'text-secondary font-light text-base',
             input:
               'rounded-lg border border-hgrey caret-tg transition-all duration-200 easy-out w-full h-10 p-2 mt-1 focus:border-tg hover:border-tg',
-            message: 'font-normal text-red-600 text-sm',
+            message: 'mt-1 font-normal text-red-600 text-sm',
           }"
         />
       </template>

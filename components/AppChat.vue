@@ -7,7 +7,7 @@ import {
 import type { Message, Chat, UserChat } from "~/types/types";
 
 const props = defineProps<{
-  chat: null | Chat;
+  chat: Chat;
 }>();
 const emit = defineEmits(["createMessage"]);
 const store = useUserStore();
@@ -18,8 +18,10 @@ const messagesContainer = ref<HTMLDivElement | null>(null);
 
 const onCreateMessage = () => {
   if (!message.value.message.trim()) return;
+
   message.value.sub = store.user.sub;
   message.value.createdAt = `${Date.now()}`;
+
   let newMessage = message.value;
   store.createMessage(newMessage);
   message.value = { sub: "", message: "", createdAt: "" };
@@ -62,14 +64,14 @@ onUpdated(() => nextTick(scrollToBottom));
           :class-name="'w-10 h-10 min-w-10 min-h-10 p-2 hover:bg-hgray'"
         >
           <MagnifyingGlassIcon
-            class="w-full h-full min-w-full min-h-full font-bold stroke-secondary"
+            class="w-full h-full min-w-full min-h-full stroke-2 stroke-secondary"
           />
         </UIButton>
         <UIButton
           :class-name="'w-10 h-10 min-w-10 min-h-10 p-2 hover:bg-hgray'"
         >
           <EllipsisVerticalIcon
-            class="w-full h-full min-w-full min-h-full font-bold stroke-secondary"
+            class="w-full h-full min-w-full min-h-full stroke-[2.5px] stroke-secondary"
           />
         </UIButton>
       </div>

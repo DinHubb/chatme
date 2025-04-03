@@ -45,34 +45,33 @@ const { submit, inProgress, ValidationErrors, error } = useSubmit(
             label: 'text-secondary font-light ',
             input:
               'rounded-lg border border-hgrey caret-tg transition-all duration-200 easy-out w-full h-10 p-2 mt-1 focus:border-tg hover:border-tg',
-            message: 'font-normal text-red-600 text-sm',
+            message: 'mt-1 font-normal text-red-600 text-sm',
           }"
         />
         <FormKit
           v-model="form.email"
-          name="text"
+          type="email"
           label="email"
-          validation="required"
+          validation="required|email"
           :classes="{
             outer: 'pb-4',
             label: 'text-secondary font-light ',
             input:
               'rounded-lg border border-hgrey caret-tg transition-all duration-200 easy-out w-full h-10 p-2 mt-1 focus:border-tg hover:border-tg',
-            message: 'font-normal text-red-600 text-sm',
+            message: 'mt-1 font-normal text-red-600 text-sm',
           }"
         />
         <FormKit
           v-model="form.password"
           type="password"
-          name="password"
           label="Password"
-          validation="required"
+          validation="required:trim|length:4"
           :classes="{
             outer: 'pb-4',
             label: 'text-secondary font-light ',
             input:
               'rounded-lg border border-hgrey caret-tg transition-all duration-200 easy-out w-full h-10 p-2 mt-1 focus:border-tg hover:border-tg',
-            message: 'font-normal text-red-600 text-sm',
+            message: 'mt-1 font-normal text-red-600 text-sm',
           }"
         />
       </template>
