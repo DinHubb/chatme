@@ -2,14 +2,14 @@
 const { login } = useAuth();
 const router = useRouter();
 
-const form = reactive({ login: "", password: "" });
+const form = shallowRef<LoginCredentials>({ login: "", password: "" });
 const errorMessages = ref({
   validate: "",
 });
 
 const { submit, inProgress, ValidationErrors, error } = useSubmit(
   async () => {
-    return login(form);
+    return login(form.value);
   },
   {
     onSuccess: () => router.push("/"),
@@ -34,32 +34,11 @@ const { submit, inProgress, ValidationErrors, error } = useSubmit(
         >
       </template>
       <template #formkitField>
-        <FormKit
-          v-model="form.login"
-          name="text"
-          label="Login"
-          validation="required"
-          :classes="{
-            outer: 'pb-4',
-            label: 'text-secondary font-light ',
-            input:
-              'rounded-lg border border-hgrey caret-tg transition-all duration-200 easy-out w-full h-10 p-2 mt-1 focus:border-tg hover:border-tg',
-            message: 'mt-1 font-normal text-red-600 text-sm',
-          }"
-        />
-        <FormKit
+        <UIFormInput v-model="form.login" :name="'text'" :label="'Login'" />
+        <UIFormInput
           v-model="form.password"
-          type="password"
-          name="password"
-          label="Password"
-          validation="required"
-          :classes="{
-            outer: 'pb-4',
-            label: 'text-secondary font-light text-base',
-            input:
-              'rounded-lg border border-hgrey caret-tg transition-all duration-200 easy-out w-full h-10 p-2 mt-1 focus:border-tg hover:border-tg',
-            message: 'mt-1 font-normal text-red-600 text-sm',
-          }"
+          :name="'password'"
+          :label="'Password'"
         />
       </template>
     </AppAuth>

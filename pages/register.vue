@@ -2,14 +2,14 @@
 const { register } = useAuth();
 const router = useRouter();
 
-const form = reactive({ username: "", email: "", password: "" });
+const form = shallowRef({ username: "", email: "", password: "" });
 const errorMessages = ref({
   validate: "",
 });
 
 const { submit, inProgress, ValidationErrors, error } = useSubmit(
   () => {
-    return register(form);
+    return register(form.value);
   },
   {
     onSuccess: () => router.push("/"),
@@ -35,44 +35,18 @@ const { submit, inProgress, ValidationErrors, error } = useSubmit(
         >
       </template>
       <template #formkitField>
-        <FormKit
-          v-model="form.username"
-          name="text"
-          label="Name"
-          validation="required"
-          :classes="{
-            outer: 'pb-4',
-            label: 'text-secondary font-light ',
-            input:
-              'rounded-lg border border-hgrey caret-tg transition-all duration-200 easy-out w-full h-10 p-2 mt-1 focus:border-tg hover:border-tg',
-            message: 'mt-1 font-normal text-red-600 text-sm',
-          }"
-        />
-        <FormKit
+        <UIFormInput v-model="form.username" :name="'text'" :label="'Name'" />
+        <UIFormInput
           v-model="form.email"
-          type="email"
-          label="email"
-          validation="required|email"
-          :classes="{
-            outer: 'pb-4',
-            label: 'text-secondary font-light ',
-            input:
-              'rounded-lg border border-hgrey caret-tg transition-all duration-200 easy-out w-full h-10 p-2 mt-1 focus:border-tg hover:border-tg',
-            message: 'mt-1 font-normal text-red-600 text-sm',
-          }"
+          :name="'email'"
+          :label="'Email'"
+          :validation="'required|email'"
         />
-        <FormKit
+        <UIFormInput
           v-model="form.password"
-          type="password"
-          label="Password"
-          validation="required:trim|length:4"
-          :classes="{
-            outer: 'pb-4',
-            label: 'text-secondary font-light ',
-            input:
-              'rounded-lg border border-hgrey caret-tg transition-all duration-200 easy-out w-full h-10 p-2 mt-1 focus:border-tg hover:border-tg',
-            message: 'mt-1 font-normal text-red-600 text-sm',
-          }"
+          :name="'password'"
+          :label="'Password'"
+          :validation="'required:trim|length:4'"
         />
       </template>
     </AppAuth>

@@ -1,4 +1,3 @@
-import type { Component } from "vue";
 import type { CallMenu } from "./menu";
 
 export interface ComponentSidebarEmits {
