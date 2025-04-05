@@ -2,14 +2,18 @@
 const { register } = useAuth();
 const router = useRouter();
 
-const form = shallowRef({ username: "", email: "", password: "" });
+const form: RegisterCredentials = reactive({
+  username: "",
+  email: "",
+  password: "",
+});
 const errorMessages = ref({
   validate: "",
 });
 
 const { submit, inProgress, ValidationErrors, error } = useSubmit(
   () => {
-    return register(form.value);
+    return register(form);
   },
   {
     onSuccess: () => router.push("/"),

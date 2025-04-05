@@ -2,14 +2,14 @@
 const { login } = useAuth();
 const router = useRouter();
 
-const form = shallowRef<LoginCredentials>({ login: "", password: "" });
+const form: LoginCredentials = reactive({ login: "", password: "" });
 const errorMessages = ref({
   validate: "",
 });
 
 const { submit, inProgress, ValidationErrors, error } = useSubmit(
   async () => {
-    return login(form.value);
+    return login(form);
   },
   {
     onSuccess: () => router.push("/"),
