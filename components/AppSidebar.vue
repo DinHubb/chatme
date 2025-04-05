@@ -14,15 +14,8 @@ type ComponentType =
   | typeof AppSetting
   | CallMenu;
 
-// Объект с компонентами
-const componentsMap = {
-  AppChats,
-  AppSetting,
-  AppEditProfile,
-};
-
-const componentHistory = shallowRef<ComponentType[]>([AppChats]);
-const currentComponent = shallowRef<ComponentType>(AppChats);
+const componentHistory = shallowRef<ComponentType[]>([AppEditProfile]);
+const currentComponent = shallowRef<ComponentType>(AppEditProfile);
 
 const handleGoBack = () => {
   if (componentHistory.value.length > 1) {

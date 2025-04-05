@@ -17,6 +17,7 @@ export default {
         tg: "#3390ec",
         darkTg:
           "hsl(209.83783783783787, 82.95964125560539%, 52.27450980392157%)",
+        placeholderInput: "#9e9e9e",
         link: "#34aaf2",
         hgray: "#F5F5F5",
         brcolor: "#dfe1e5",
