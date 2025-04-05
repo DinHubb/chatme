@@ -3,11 +3,11 @@ export const useRipple = () => {
     const button = event.currentTarget as HTMLElement;
     if (!button) return;
 
-    const ripple = document.createElement("span");
-    const rect = button.getBoundingClientRect();
-    const size = Math.max(button.offsetWidth, button.offsetHeight);
-    const x = event.clientX - rect.left - size / 2;
-    const y = event.clientY - rect.top - size / 2;
+    const ripple: HTMLElement = document.createElement("span");
+    const rect: DOMRect = button.getBoundingClientRect();
+    const size: number = Math.max(button.offsetWidth, button.offsetHeight);
+    const x: number = event.clientX - rect.left - size / 2;
+    const y: number = event.clientY - rect.top - size / 2;
 
     ripple.style.width = ripple.style.height = `${size}px`;
     ripple.style.left = `${x}px`;

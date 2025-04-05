@@ -5,8 +5,9 @@ const router = useRouter();
 export const useUserStore = defineStore("user", () => {
   const user = ref<UserInfo>({
     id: null,
-    sub: "",
+    username: "",
     avatar: "",
+    email: "",
     fullName: "",
     chats: [],
     allUsers: [],
@@ -15,6 +16,7 @@ export const useUserStore = defineStore("user", () => {
     currentChat: null,
   });
   const isLoggedIn = ref<boolean>(false);
+  const componentMenu = shallowRef<string | null>(null);
   const tokenCookie = useCookie("access_token");
 
   const setUser = (person: any) => {
@@ -39,11 +41,16 @@ export const useUserStore = defineStore("user", () => {
   //   user.value.currentChat?.messages.push(message);
   // };
 
+  const setComponentMenu = (menu: string | null) => {
+    componentMenu.value = menu;
+  };
+
   function clearUser() {
     user.value = {
       id: null,
-      sub: "",
+      username: "",
       avatar: "",
+      email: "",
       fullName: "",
       chats: [],
       allUsers: [],
@@ -58,8 +65,10 @@ export const useUserStore = defineStore("user", () => {
   return {
     user,
     isLoggedIn,
+    componentMenu,
     setUser,
     checkLogged,
+    setComponentMenu,
     clearUser,
   };
 });

@@ -1,76 +1,44 @@
 <script setup lang="ts">
-import { CogIcon, EllipsisVerticalIcon } from "@heroicons/vue/20/solid";
-import { Bars3Icon } from "@heroicons/vue/24/solid";
+import type { Component } from "vue";
+import type { ComponentMenuEmits } from "~/types/emits";
+import type { ComponentMenuProps } from "~/types/props";
 
-type MenuItem = {
-  name: string;
-  avatar?: string;
-  prefixIcon?: any;
-  suffixIcon?: string;
-  call?: string;
-};
+const props = defineProps<ComponentMenuProps>();
+const emit = defineEmits<ComponentMenuEmits>();
 
-type MenuItems = {
-  accounts: MenuItem[];
-  additionals: MenuItem[];
-};
-
-const props = defineProps<{
-  user: any;
-}>();
-const emit = defineEmits<{
-  logout: [];
-  selectMenuItem: [value: string];
-}>();
-
-const menuItems: MenuItems = {
-  accounts: [
-    {
-      name: props.user?.username,
-      avatar: props.user?.avatar,
-      call: "setting",
-    },
-  ],
-  additionals: [
-    {
-      name: "Settings",
-      prefixIcon: CogIcon,
-      suffixIcon: "",
-      call: "settings",
-    },
-    {
-      name: "More",
-      prefixIcon: EllipsisVerticalIcon,
-      suffixIcon: "",
-    },
-  ],
-};
-
-function handleSelectMenuItem(menuItem: MenuItem) {
-  if (menuItem.call) {
-    emit("selectMenuItem", menuItem.call);
+const transitionClasses = computed(() => {
+  if (props.position === "right") {
+    return {
+      enterFrom: "opacity-0 scale-95 translate-x-2 -translate-y-2",
+      leaveTo: "opacity-0 scale-95 translate-x-2 -translate-y-2",
+    };
   }
-}
+  return {
+    enterFrom: "opacity-0 scale-95 -translate-x-2 -translate-y-2",
+    leaveTo: "opacity-0 scale-95 -translate-x-2 -translate-y-2",
+  };
+});
 </script>
 <template>
   <div>
     <HeadlessMenu>
       <HeadlessMenuButton>
-        <UIButton :class-name="'p-2 hover:bg-hgray'">
-          <Bars3Icon class="fill-secondary stroke-2 w-6 h-6" /> </UIButton
-      ></HeadlessMenuButton>
+        <slot name="menu-button"></slot>
+      </HeadlessMenuButton>
       <transition
         enter-active-class="transition-opacity transition-transform duration-200 [transition-timing-function:cubic-bezier(0.4,0,0.2,1)]"
-        enter-from-class="opacity-0 scale-95 -translate-x-2 -translate-y-2"
+        :enter-from-class="transitionClasses.enterFrom"
         enter-to-class="opacity-100 scale-100 translate-x-0 translate-y-0"
         leave-active-class="transition-opacity transition-transform duration-200 [transition-timing-function:cubic-bezier(0.4,0,0.2,1)]"
         leave-from-class="opacity-100 scale-100 translate-x-0 translate-y-0"
-        leave-to-class="opacity-0 scale-95 -translate-x-2 -translate-y-2"
+        :leave-to-class="transitionClasses.leaveTo"
       >
         <HeadlessMenuItems
-          class="mt-2 py-1.5 w-auto absolute text-sm font-medium rounded-lg shadow-[0px_0px_10px_rgba(0,0,0,0.15)] bg-white/85 backdrop-blur-2xl"
+          class="mt-2.5 py-1.5 w-auto absolute text-sm font-medium rounded-lg shadow-[0px_0px_10px_rgba(0,0,0,0.15)] bg-white/85 backdrop-blur-2xl"
+          :class="props.position === 'right' ? 'right-4' : 'left-4'"
         >
           <HeadlessMenuItem
+            v-if="menuItems.accounts"
             v-slot="{ active }"
             v-for="menu in menuItems.accounts"
           >
@@ -80,7 +48,7 @@ function handleSelectMenuItem(menuItem: MenuItem) {
                 'bg-lightSecond transition-all duration-200 ease-in-out rounded-md':
                   active,
               }"
-              @click="handleSelectMenuItem(menu)"
+              @click="emit('selectMenuItem', menu.call)"
             >
               <div class="mr-[18px] -ml-0.5 w-6 h-6 max-w-6 max-h-6 flex">
                 <UIProfileAvatar
@@ -93,7 +61,12 @@ function handleSelectMenuItem(menuItem: MenuItem) {
               </span>
             </button>
           </HeadlessMenuItem>
-          <hr class="my-1.5 border-brcolor opacity-60" />
+          <hr
+            v-if="
+              Object.values(menuItems).some((section) => section.length > 1)
+            "
+            class="my-1.5 border-brcolor opacity-60"
+          />
           <HeadlessMenuItem
             v-slot="{ active }"
             v-for="menu in menuItems.additionals"
@@ -104,7 +77,7 @@ function handleSelectMenuItem(menuItem: MenuItem) {
                 'bg-lightSecond transition-all duration-200 ease-in-out rounded-md':
                   active,
               }"
-              @click="handleSelectMenuItem(menu)"
+              @click="emit('selectMenuItem', menu.call)"
             >
               <span class="mr-5 flex items-center w-6 h-6">
                 <component :is="menu.prefixIcon" class="w-5 h-5" />
@@ -122,6 +95,3 @@ function handleSelectMenuItem(menuItem: MenuItem) {
     </HeadlessMenu>
   </div>
 </template>
-<!-- <button @click="emit('logout')" :class="{ 'bg-blue-500': active }">
-  logout
-</button> -->

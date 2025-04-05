@@ -67,12 +67,7 @@ const handleSelectChat = (event: Chat) => {
 <template>
   <div class="__container min-h-full h-full">
     <div class="flex min-h-full h-full border border-brcolor">
-      <AppSidebar
-        :user="user"
-        :chatRooms="user.chats"
-        :currentChat="user.currentChat?.user"
-        @selectChat="handleSelectChat"
-      />
+      <AppSidebar @selectChat="handleSelectChat" />
       <main class="overflow-hidden flex-1 relative flex flex-col pb-5">
         <UIBackgroundChat />
         <AppChat v-if="user?.currentChat" :chat="user?.currentChat" />

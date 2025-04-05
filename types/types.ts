@@ -1,13 +1,14 @@
 export interface Message {
-  sub: string;
+  username: string;
   message: string;
   createdAt: string;
 }
 
 export interface UserChat {
-  sub: string;
+  username: string;
   fullName: string;
   avatar: string;
+  email: string;
 }
 
 export interface Chat {
@@ -20,15 +21,17 @@ export interface Chat {
 }
 
 export interface User {
-  sub: string;
+  username: string;
   fullName: string;
   avatar: string;
+  email: string;
 }
 
 export interface UserInfo {
   id: number | null;
-  sub: string;
+  username: string;
   avatar: string;
+  email: string;
   fullName: string;
   chats: Chat[];
   allUsers: User[];

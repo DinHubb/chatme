@@ -23,7 +23,7 @@ export const useAuth = () => {
         storeUser.setUser(response);
       }
     } catch (error: any) {
-      storeUser.clearUser();
+      logout();
     }
   }
 

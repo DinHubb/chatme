@@ -1,53 +1,119 @@
 <script setup lang="ts">
 import {
+  ArrowRightStartOnRectangleIcon,
   EllipsisVerticalIcon,
   PencilIcon,
   PhoneIcon,
 } from "@heroicons/vue/24/outline";
 import { ArrowLeftIcon } from "@heroicons/vue/24/outline";
+import type { ComponentSidebarEmits } from "~/types/emits";
+import type { CallMenu, MenuItems } from "~/types/menu";
+import type { ComponentSidebarProps } from "~/types/props";
+import AppEditProfile from "./AppEditProfile.vue";
 
-const props = defineProps<{
-  user: any;
-  menuItem: string;
-}>();
+const props = defineProps<ComponentSidebarProps>();
+const emit = defineEmits<ComponentSidebarEmits>();
+const { logout } = useAuth();
 
-const emit = defineEmits<{
-  goBack: [];
-}>();
+const isMessageVisible = ref<boolean>(false);
+const menuItems: MenuItems = {
+  additionals: [
+    {
+      name: "Log Out",
+      prefixIcon: ArrowRightStartOnRectangleIcon,
+      suffixIcon: "",
+      call: logout,
+    },
+  ],
+};
 
-const selectEditProfile = ref<boolean>(false);
+const handleSelectMenuItem = (menuItem: CallMenu) => {
+  if (!menuItem) return;
+
+  if (typeof menuItem === "function") {
+    (menuItem as Function)();
+  }
+};
+
+const textPopupMessage = shallowRef<string>("");
+const messageStyle = shallowRef({ left: "0px", top: "0px" });
+const containerRef = shallowRef<HTMLElement | null>(null);
+const tooltipSize = { width: 120, height: 40 };
+
+const findMousePosition = (event: MouseEvent) => {
+  if (!containerRef.value) return;
+
+  const rect = containerRef.value.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+
+  let adjustedX = x;
+  let adjustedY = y;
+
+  if (adjustedX + tooltipSize.width > rect.width) {
+    adjustedX = x - tooltipSize.width - 10;
+  }
+
+  if (adjustedY + tooltipSize.height > rect.height) {
+    adjustedY = y - tooltipSize.height - 10;
+  }
+
+  messageStyle.value = { left: `${adjustedX}px`, top: `${adjustedY}px` };
+};
+
+const handleCopyText = (event: MouseEvent, copy: string) => {
+  findMousePosition(event);
+  isMessageVisible.value = true;
+
+  navigator.clipboard
+    .writeText(copy)
+    .then(() => {
+      textPopupMessage.value = "The text is copied";
+    })
+    .catch((err) => {
+      textPopupMessage.value = "Error";
+    })
+    .finally(() => {
+      setTimeout(() => {
+        isMessageVisible.value = false;
+      }, 2000);
+    });
+};
 </script>
 
 <template>
-  <div v-if="!selectEditProfile" class="h-full bg-bgColor">
+  <div class="absolute w-full h-full">
     <div class="py-2 px-4 bg-white">
       <div class="flex items-center">
-        <button
-          class="w-10 h-10 min-w-10 min-h-10 p-2 rounded-full hover:bg-hgray"
-          @click="emit('goBack')"
-        >
+        <button class="p-2 rounded-full hover:bg-hgray" @click="emit('goBack')">
           <ArrowLeftIcon class="w-6 h-6 stroke-2 stroke-secondary" />
         </button>
         <div class="flex items-center justify-between w-full">
           <div class="pl-6 first-letter:uppercase text-xl font-medium">
-            {{ menuItem }}
+            {{ componentMenu }}
           </div>
-          <div class="space-x-2">
+          <div class="space-x-2 flex">
             <UIButton
-              :class-name="'w-10 h-10 min-w-10 min-h-10 p-2 hover:bg-hgray'"
-              @click="selectEditProfile = true"
+              :class-name="' p-2 hover:bg-hgray'"
+              @click="emit('next', AppEditProfile)"
             >
-              <PencilIcon
-                class="w-full h-full min-w-full min-h-full stroke-2 stroke-secondary"
-              />
+              <PencilIcon class="w-6 h-6 stroke-2 stroke-secondary" />
             </UIButton>
-            <UIButton
-              :class-name="'w-10 h-10 min-w-10 min-h-10 p-2 hover:bg-hgray'"
+
+            <UIMenu
+              :user="user"
+              :menu-items="menuItems"
+              :position="'right'"
+              @select-menu-item="handleSelectMenuItem"
             >
-              <EllipsisVerticalIcon
-                class="w-full h-full min-w-full min-h-full stroke-[2.5px] stroke-secondary"
-              />
-            </UIButton>
+              <template #menu-button>
+                <UIButton :class-name="'p-2 hover:bg-hgray'">
+                  <EllipsisVerticalIcon
+                    class="w-6 h-6 stroke-[2.5px] stroke-secondary"
+                  />
+                </UIButton>
+              </template>
+            </UIMenu>
           </div>
         </div>
       </div>
@@ -66,20 +132,25 @@ const selectEditProfile = ref<boolean>(false);
         </div>
       </div>
       <div
-        class="relative flex rounded-xl items-center pl-[72px] py-[7px] pr-4 hover:bg-hgray -mx-2"
+        ref="containerRef"
+        class="relative flex rounded-xl items-center pl-[72px] py-[7px] pr-4 hover:bg-hgray -mx-2 cursor-pointer"
+        @click="handleCopyText($event, user.email)"
       >
-        <button class="absolute left-2 w-10 h-10 min-w-10 min-h-10 p-2">
-          <PhoneIcon
-            class="w-full h-full min-h-full min-w-full stroke-secondary"
-          />
+        <button class="absolute left-2 p-2">
+          <PhoneIcon class="w-6 h-6 stroke-secondary" />
         </button>
         <div>
           <p class="font-light">{{ user.email }}</p>
-
           <span class="text-sm text-secondary">Phone</span>
+        </div>
+        <div
+          v-if="isMessageVisible"
+          class="absolute p-2 bg-black/80 z-50 text-white text-xs rounded-md transition-opacity duration-300"
+          :style="messageStyle"
+        >
+          {{ textPopupMessage }}
         </div>
       </div>
     </div>
   </div>
-  <AppEditProfile v-else :user="user" @go-back="selectEditProfile = false" />
 </template>

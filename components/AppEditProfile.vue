@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import { ArrowLeftIcon } from "@heroicons/vue/24/outline";
+import type { ComponentSidebarEmits } from "~/types/emits";
+import type { ComponentSidebarProps } from "~/types/props";
 
-const props = defineProps<{
-  user: any;
-}>();
-const emit = defineEmits<{
-  goBack: [];
-}>();
+const props = defineProps<ComponentSidebarProps>();
+const emit = defineEmits<ComponentSidebarEmits>();
 </script>
 
 <template>
-  <div class="h-full bg-bgColor">
+  <div class="absolute w-full h-full bg-bgColor">
     <div class="bg-white">
       <div class="py-2 px-4 flex items-center">
         <button
