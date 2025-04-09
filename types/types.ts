@@ -7,7 +7,7 @@ export interface Message {
 export interface UserChat {
   username: string;
   fullName: string;
-  avatar: string;
+  avatar: File | string;
   email: string;
 }
 
@@ -23,14 +23,15 @@ export interface Chat {
 export interface User {
   username: string;
   fullName: string;
-  avatar: string;
+  avatar: File | string;
   email: string;
+  bio?: string;
 }
 
 export interface UserInfo {
   id: number | null;
   username: string;
-  avatar: string;
+  avatar: File | string;
   email: string;
   fullName: string;
   chats: Chat[];

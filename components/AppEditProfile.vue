@@ -1,15 +1,59 @@
 <script setup lang="ts">
-import { ArrowLeftIcon } from "@heroicons/vue/24/outline";
+import {
+  ArrowLeftIcon,
+  CameraIcon,
+  CheckIcon,
+} from "@heroicons/vue/24/outline";
 import type { ComponentSidebarEmits } from "~/types/emits";
 import type { ComponentSidebarProps } from "~/types/props";
+import type { User } from "~/types/types";
 
 const props = defineProps<ComponentSidebarProps>();
 const emit = defineEmits<ComponentSidebarEmits>();
+
+const originalForm: User = {
+  fullName: props.user.fullName,
+  email: props.user.email,
+  username: props.user.username,
+  avatar: props.user.avatar,
+  bio: "",
+};
+const form = reactive<User>({ ...originalForm });
+const inputFile = shallowRef<HTMLElement | null>(null);
+const previewAvatar = ref<string | null>(null);
+
+const isFormChanged = computed(() =>
+  Object.keys(form).some(
+    (key) => form[key as keyof User] !== originalForm[key as keyof User]
+  )
+);
+
+const uploadAvatar = () => {
+  inputFile.value?.click();
+};
+
+function onChangeAvatar(event: any) {
+  const file = event.target?.files[0];
+
+  if (file) {
+    processFile(file);
+    event.target.value = "";
+  }
+}
+
+const processFile = (fileItem: File) => {
+  const newFile = new File([fileItem], fileItem.name, {
+    type: fileItem.type,
+  });
+
+  previewAvatar.value = URL.createObjectURL(fileItem);
+  form.avatar = newFile;
+};
 </script>
 
 <template>
   <div class="absolute w-full h-full bg-bgColor">
-    <div class="bg-white">
+    <div class="bg-white mb-3 shadow-[0_1px_3px_0_rgba(0,0,0,0.06)]">
       <div class="py-2 px-4 flex items-center">
         <button
           class="w-10 h-10 min-w-10 min-h-10 p-2 rounded-full hover:bg-hgray"
@@ -21,55 +65,85 @@ const emit = defineEmits<ComponentSidebarEmits>();
           <span class="pl-6 text-xl font-medium"> Edit Profile </span>
         </div>
       </div>
-      <div class="flex flex-col py-8 mx-2 items-center">
-        <div class="w-[120px] h-[120px] max-w-32 max-h-32 mb-5">
+      <div class="flex flex-col pt-8 pb-2 mx-2 items-center">
+        <div
+          class="relative group overflow-hidden flex justify-center items-center w-[120px] h-[120px] rounded-full cursor-pointer mb-5"
+          @click="uploadAvatar"
+        >
+          <div
+            class="absolute w-full h-full filter brightness-75 bg-[rgba(0,0,0,0.28)] rounded-full"
+          ></div>
+          <CameraIcon
+            class="w-12 h-12 absolute text-white group-hover:scale-125 transition-transform duration-200 ease-in-out"
+          />
           <UIProfileAvatar
             :user="user"
+            :preview="previewAvatar"
             :class-name="'w-full h-full text-4xl'"
           />
-        </div>
-        <FormKit
-          type="form"
-          :actions="false"
-          :incomplete-message="false"
-          :classes="{
-            form: 'w-full px-3 my-3',
-            messages: 'text-red-600 text-center pt-3',
-          }"
-        >
-          <FormKit
-            name="text"
-            label="Name"
-            :classes="{
-              outer: 'pb-4 relative',
-              wrapper: 'flex items-center',
-              inner: 'w-full',
-              label:
-                'edit__profile__label absolute left-3.5 text-placeholderInput text-lg px-1 bg-white cursor-text font-light transition-all duration-200',
-              input:
-                'rounded-[10px] outline-none bg-white border border-hgrey caret-tg transition-all  duration-200 easy-out w-full p-3.5 focus:border-tg hover:border-tg',
-              message: 'mt-1 font-normal text-red-600 text-sm',
-            }"
+          <input
+            ref="inputFile"
+            type="file"
+            class="hidden"
+            @change="onChangeAvatar($event)"
           />
-          <!-- <input
-                type="text"
-                class="rounded-lg border border-hgrey caret-tg transition-all duration-200 easy-out w-full h-10 p-2 mt-1 focus:border-tg hover:border-tg"
-              />
-              <label for="">Username</label> -->
-        </FormKit>
+        </div>
+        <div class="w-full px-3 my-3 space-y-5">
+          <UIFormAnimateInput
+            v-model="form.fullName"
+            :name="'text'"
+            :label="'Name'"
+            :validation="''"
+          />
+          <UIFormAnimateInput
+            v-model="form.bio"
+            :name="'text'"
+            :label="'Bio (optional)'"
+            :validation="''"
+          />
+        </div>
       </div>
     </div>
+    <div class="text-secondary text-sm px-6 mb-4">
+      Any details such as age, occupation or city. <br />
+      Example: 23 y.o. designer from San Francisco
+    </div>
+    <div
+      class="bg-white mb-3 py-2 font-light shadow-[0_1px_3px_0_rgba(0,0,0,0.06)]"
+    >
+      <div class="mx-2">
+        <h4 class="py-2 px-4 text-tg font-medium">Username</h4>
+        <div class="my-3 px-3">
+          <UIFormAnimateInput
+            v-model="form.username"
+            :name="'text'"
+            :label="'Username (optional)'"
+            :validation="''"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="text-secondary text-sm px-6 mb-4">
+      <span
+        >You can choose a username on <b>Chatme</b>. If you do, people will be
+        able to find you by this username and contact you without needing your
+        phone number.<br /><br />You can use <b>a–z</b>, <b>0–9</b> and
+        underscores. Minimum length is <b>5</b> characters.</span
+      >
+    </div>
+    <Transition
+      enter-active-class="transition-all duration-200 ease-[cubic-bezier(.34,1.56,.64,1)]"
+      enter-from-class="translate-y-full"
+      enter-to-class="translate-y-0"
+      leave-active-class="transition-all duration-200 ease-in-out"
+      leave-from-class="opacity-100 translate-y-0"
+      leave-to-class="opacity-0 translate-y-full"
+    >
+      <div v-if="isFormChanged" class="absolute bottom-5 right-5">
+        <UIButton :class-name="'w-14 h-14 bg-tg hover:bg-darkTg'">
+          <span class="text-2xl text-white">✓</span>
+        </UIButton>
+      </div>
+    </Transition>
   </div>
 </template>
-
-<style>
-.formkit-wrapper:hover .edit__profile__label {
-  color: #3390ec;
-}
-.formkit-wrapper:focus-within .formkit-label {
-  transform: translateY(-1.5rem) scale(0.9);
-  font-weight: 500;
-  color: #3390ec;
-  transform-origin: left center;
-}
-</style>

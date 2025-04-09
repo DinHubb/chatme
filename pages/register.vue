@@ -39,7 +39,12 @@ const { submit, inProgress, ValidationErrors, error } = useSubmit(
         >
       </template>
       <template #formkitField>
-        <UIFormInput v-model="form.username" :name="'text'" :label="'Name'" />
+        <UIFormInput
+          v-model="form.username"
+          :name="'text'"
+          :label="'Name'"
+          :validation="'required'"
+        />
         <UIFormInput
           v-model="form.email"
           :name="'email'"

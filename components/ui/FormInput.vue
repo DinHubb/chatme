@@ -3,7 +3,7 @@ const props = defineProps<{
   modelValue: string;
   name: string;
   label: string;
-  validation?: string;
+  validation: string;
 }>();
 
 const emit = defineEmits<{
@@ -21,7 +21,7 @@ const valueRef = computed({
     v-model="valueRef"
     :name="name"
     :label="label"
-    :validation="validation || 'required'"
+    :validation="validation"
     :classes="{
       outer: 'pb-4',
       label: 'text-secondary font-light',

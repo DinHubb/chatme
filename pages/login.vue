@@ -34,11 +34,17 @@ const { submit, inProgress, ValidationErrors, error } = useSubmit(
         >
       </template>
       <template #formkitField>
-        <UIFormInput v-model="form.login" :name="'text'" :label="'Login'" />
+        <UIFormInput
+          v-model="form.login"
+          :name="'text'"
+          :label="'Login'"
+          :validation="'required'"
+        />
         <UIFormInput
           v-model="form.password"
           :name="'password'"
           :label="'Password'"
+          :validation="'required'"
         />
       </template>
     </AppAuth>
