@@ -1,54 +1,57 @@
 export interface Message {
-  username: string;
-  message: string;
-  createdAt: string;
-}
-
-export interface UserChat {
-  username: string;
-  fullName: string;
-  avatar: File | string;
-  email: string;
-}
-
-export interface Chat {
-  id: number;
-  participants: string[];
-  messages: Message[];
-  sub1HasViewed: boolean;
-  sub2HasViewed: boolean;
-  user: UserChat;
+  id: string;
+  chat_id: string;
+  sender_id: string;
+  content: string;
+  type: "text" | "image" | "video" | "audio" | "file" | "sticker" | "system";
+  media_url?: string;
+  replied_to_message_id?: string;
+  isEdited: boolean;
+  sentAt: string;
+  deliveredAt?: string;
+  readBy: string[];
+  reactions?: { [emoji: string]: string[] };
 }
 
 export interface User {
   username: string;
-  fullName: string;
-  avatar: File | string;
-  email: string;
+  full_name: string;
+  avatar_url: string | File;
+  msisdn: string;
   bio?: string;
 }
 
+export interface Chat {
+  id: string;
+  type: "private" | "group" | "channel";
+  name?: string;
+  avatar_url?: string;
+  participants: User[];
+  admins?: string[];
+  messages: Message[];
+  lastMessageId?: string;
+  pinnedMessageId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface UserInfo {
-  id: number | null;
+  id: string;
   username: string;
-  avatar: File | string;
-  email: string;
-  fullName: string;
+  msisdn: string;
+  full_name: string;
+  bio: string;
+  avatar_url: string;
   chats: Chat[];
-  allUsers: User[];
-  userDataForChat: {
-    id: string;
-    sub1: string;
-    sub2: string;
-    messages: string[];
-  }[];
-  showFindFriends: boolean;
   currentChat: Chat | null;
+  isAdminInChat?: boolean;
+  isMutedInChat?: boolean;
+  showFindFriends: boolean;
 }
 
 export interface Form {
   login?: string;
   username?: string;
-  email?: string;
+  msisdn?: string;
   password: string;
 }

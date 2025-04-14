@@ -12,10 +12,10 @@ const props = defineProps<ComponentSidebarProps>();
 const emit = defineEmits<ComponentSidebarEmits>();
 
 const originalForm: User = {
-  fullName: props.user.fullName,
-  email: props.user.email,
+  full_name: props.user.full_name,
+  msisdn: props.user.msisdn,
   username: props.user.username,
-  avatar: props.user.avatar,
+  avatar_url: props.user.avatar_url,
   bio: "",
 };
 const form = reactive<User>({ ...originalForm });
@@ -47,7 +47,7 @@ const processFile = (fileItem: File) => {
   });
 
   previewAvatar.value = URL.createObjectURL(fileItem);
-  form.avatar = newFile;
+  form.avatar_url = newFile;
 };
 </script>
 
@@ -76,9 +76,12 @@ const processFile = (fileItem: File) => {
           <CameraIcon
             class="w-12 h-12 absolute text-white group-hover:scale-125 transition-transform duration-200 ease-in-out"
           />
+          <div v-if="previewAvatar" class="rounded-full overflow-hidden">
+            <img :src="previewAvatar ?? ''" alt="" />
+          </div>
           <UIProfileAvatar
+            v-else
             :user="user"
-            :preview="previewAvatar"
             :class-name="'w-full h-full text-4xl'"
           />
           <input
@@ -90,7 +93,7 @@ const processFile = (fileItem: File) => {
         </div>
         <div class="w-full px-3 my-3 space-y-5">
           <UIFormAnimateInput
-            v-model="form.fullName"
+            v-model="form.full_name"
             :name="'text'"
             :label="'Name'"
             :validation="''"

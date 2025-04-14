@@ -14,8 +14,8 @@ type ComponentType =
   | typeof AppSetting
   | CallMenu;
 
-const componentHistory = shallowRef<ComponentType[]>([AppEditProfile]);
-const currentComponent = shallowRef<ComponentType>(AppEditProfile);
+const componentHistory = shallowRef<ComponentType[]>([AppChats]);
+const currentComponent = shallowRef<ComponentType>(AppChats);
 
 const handleGoBack = () => {
   if (componentHistory.value.length > 1) {

@@ -22,12 +22,13 @@ const valueRef = computed({
     :name="name"
     :label="label"
     :validation="validation"
+    autocomplete="off"
     :classes="{
       outer: 'relative',
       wrapper: 'flex items-center',
       inner: 'w-full',
       label:
-        'edit__profile__label absolute left-3.5 text-placeholderInput px-1 bg-white cursor-text font-light origin-top-left transition-all easy-in-out duration-200' +
+        'edit__profile__label absolute left-3.5 text-placeholderInput px-1 bg-white select-none pointer-events-none font-light origin-top-left transition-all easy-in-out duration-200' +
         (valueRef ? ' label--active' : ''),
       input:
         ' rounded-[10px] outline-none bg-white border border-hgrey caret-tg transition-all duration-200 easy-out w-full p-3.5 focus:border-tg hover:border-tg',

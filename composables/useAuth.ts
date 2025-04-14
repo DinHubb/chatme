@@ -5,7 +5,7 @@ export type LoginCredentials = {
 
 export type RegisterCredentials = {
   username: string;
-  email: string;
+  msisdn: string;
   password: string;
 };
 

@@ -4,7 +4,7 @@ const router = useRouter();
 
 const form: RegisterCredentials = reactive({
   username: "",
-  email: "",
+  msisdn: "",
   password: "",
 });
 const errorMessages = ref({
@@ -46,10 +46,10 @@ const { submit, inProgress, ValidationErrors, error } = useSubmit(
           :validation="'required'"
         />
         <UIFormInput
-          v-model="form.email"
-          :name="'email'"
-          :label="'Email'"
-          :validation="'required|email'"
+          v-model="form.msisdn"
+          :name="'number'"
+          :label="'Phone number'"
+          :validation="'required|number'"
         />
         <UIFormInput
           v-model="form.password"

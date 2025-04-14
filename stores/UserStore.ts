@@ -4,19 +4,17 @@ const router = useRouter();
 
 export const useUserStore = defineStore("user", () => {
   const user = ref<UserInfo>({
-    id: null,
+    id: "",
     username: "",
-    avatar: "",
-    email: "",
-    fullName: "",
-    chats: [],
-    allUsers: [],
-    userDataForChat: [],
-    showFindFriends: true,
-    currentChat: null,
+    msisdn: "",
+    full_name: "",
+    bio: "",
+    avatar_url: "",
+    chats: [] as Chat[],
+    currentChat: null as Chat | null,
+    showFindFriends: false,
   });
   const isLoggedIn = ref<boolean>(false);
-  const componentMenu = shallowRef<string | null>(null);
   const tokenCookie = useCookie("access_token");
 
   const setUser = (person: any) => {
@@ -32,31 +30,17 @@ export const useUserStore = defineStore("user", () => {
     }
   };
 
-  // const findChat = () => {
-  //   user.value.currentChat =
-  //     user.value.chats.find((o) => o.id === Number(hashRoute)) || null;
-  // };
-
-  // const createMessage = (message: Message) => {
-  //   user.value.currentChat?.messages.push(message);
-  // };
-
-  const setComponentMenu = (menu: string | null) => {
-    componentMenu.value = menu;
-  };
-
   function clearUser() {
     user.value = {
-      id: null,
+      id: "",
       username: "",
-      avatar: "",
-      email: "",
-      fullName: "",
-      chats: [],
-      allUsers: [],
-      userDataForChat: [],
-      showFindFriends: true,
+      avatar_url: "",
+      msisdn: "",
+      full_name: "",
+      chats: [] as Chat[],
+      bio: "",
       currentChat: null,
+      showFindFriends: true,
     };
     isLoggedIn.value = false;
     tokenCookie.value = null;
@@ -65,10 +49,8 @@ export const useUserStore = defineStore("user", () => {
   return {
     user,
     isLoggedIn,
-    componentMenu,
     setUser,
     checkLogged,
-    setComponentMenu,
     clearUser,
   };
 });
