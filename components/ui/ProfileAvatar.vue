@@ -9,6 +9,18 @@ const props = defineProps<{
 
 <template>
   <div
+    v-if="user.avatar_url"
+    class="relative rounded-full overflow-hidden bg-tg"
+    :class="className"
+  >
+    <img
+      :src="user.avatar_url"
+      class="object-fill"
+      :alt="user.full_name + '`s avatar'"
+    />
+  </div>
+  <div
+    v-else
     class="flex justify-center items-center font-medium bg-gradient-to-b uppercase text-white from-[#5CAFFA] to-[#408ACF] rounded-full overflow-hidden"
     :class="className"
     :style="{

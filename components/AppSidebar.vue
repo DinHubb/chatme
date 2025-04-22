@@ -4,7 +4,6 @@ import AppEditProfile from "@/components/AppEditProfile.vue";
 import AppSetting from "./AppSetting.vue";
 import type { CallMenu } from "~/types/menu";
 const emit = defineEmits(["select-chat"]);
-const storeUser = useUserStore();
 
 const transitionName = ref("fade-to-left");
 
@@ -39,7 +38,6 @@ const handleNext = (component: ComponentType) => {
     <Transition :name="transitionName">
       <component
         :is="currentComponent"
-        :user="storeUser.user"
         @go-back="handleGoBack"
         @next="handleNext"
       />

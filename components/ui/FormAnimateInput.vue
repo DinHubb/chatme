@@ -4,6 +4,7 @@ const props = defineProps<{
   name: string;
   label: string;
   validation: string;
+  type: any;
 }>();
 
 const emit = defineEmits<{
@@ -20,8 +21,10 @@ const valueRef = computed({
   <FormKit
     v-model.trim="valueRef"
     :name="name"
+    :type="type"
     :label="label"
     :validation="validation"
+    rows="1"
     autocomplete="off"
     :classes="{
       outer: 'relative',
@@ -31,7 +34,7 @@ const valueRef = computed({
         'edit__profile__label absolute left-3.5 text-placeholderInput px-1 bg-white select-none pointer-events-none font-light origin-top-left transition-all easy-in-out duration-200' +
         (valueRef ? ' label--active' : ''),
       input:
-        ' rounded-[10px] outline-none bg-white border border-hgrey caret-tg transition-all duration-200 easy-out w-full p-3.5 focus:border-tg hover:border-tg',
+        ' rounded-[10px] resize-none outline-none bg-white border border-hgrey caret-tg transition-all duration-200 easy-out w-full p-3.5 focus:border-tg hover:border-tg',
       message: 'mt-1 font-normal text-red-600 text-sm',
     }"
   />

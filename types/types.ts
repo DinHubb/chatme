@@ -16,7 +16,7 @@ export interface Message {
 export interface User {
   username: string;
   full_name: string;
-  avatar_url: string | File;
+  avatar_url: string;
   msisdn: string;
   bio?: string;
 }
@@ -54,4 +54,12 @@ export interface Form {
   username?: string;
   msisdn?: string;
   password: string;
+}
+
+export interface UpdateUserFields {
+  username: string;
+  full_name: string;
+  avatar_file: File | string;
+  msisdn: string;
+  bio: string;
 }

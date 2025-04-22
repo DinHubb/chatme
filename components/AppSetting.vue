@@ -13,6 +13,8 @@ import AppEditProfile from "./AppEditProfile.vue";
 
 const props = defineProps<ComponentSidebarProps>();
 const emit = defineEmits<ComponentSidebarEmits>();
+const { user } = useUserStore();
+
 const { logout } = useAuth();
 
 const isMessageVisible = ref<boolean>(false);
@@ -134,13 +136,13 @@ const handleCopyText = (event: MouseEvent, copy: string) => {
       <div
         ref="containerRef"
         class="relative flex rounded-xl items-center pl-[72px] py-[7px] pr-4 hover:bg-hgray -mx-2 cursor-pointer"
-        @click="handleCopyText($event, user.email)"
+        @click="handleCopyText($event, user.msisdn)"
       >
         <button class="absolute left-2 p-2">
           <PhoneIcon class="w-6 h-6 stroke-secondary" />
         </button>
         <div>
-          <p class="font-light">{{ user.email }}</p>
+          <p class="font-light">{{ user.msisdn }}</p>
           <span class="text-sm text-secondary">Phone</span>
         </div>
         <div

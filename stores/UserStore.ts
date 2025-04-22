@@ -1,6 +1,4 @@
-import type { UserInfo, Message, Chat } from "~/types/types";
-const route = useRoute();
-const router = useRouter();
+import type { UserInfo, Message, Chat, User } from "~/types/types";
 
 export const useUserStore = defineStore("user", () => {
   const user = ref<UserInfo>({
@@ -30,6 +28,14 @@ export const useUserStore = defineStore("user", () => {
     }
   };
 
+  const updateUser = (updatedUser: User) => {
+    user.value = { ...user.value, ...updatedUser };
+  };
+
+  const setCurrentChat = (chat: Chat) => {
+    user.value.currentChat = chat;
+  };
+
   function clearUser() {
     user.value = {
       id: "",
@@ -40,7 +46,7 @@ export const useUserStore = defineStore("user", () => {
       chats: [] as Chat[],
       bio: "",
       currentChat: null,
-      showFindFriends: true,
+      showFindFriends: false,
     };
     isLoggedIn.value = false;
     tokenCookie.value = null;
@@ -51,6 +57,8 @@ export const useUserStore = defineStore("user", () => {
     isLoggedIn,
     setUser,
     checkLogged,
+    updateUser,
+    setCurrentChat,
     clearUser,
   };
 });

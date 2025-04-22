@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Component } from "vue";
 import type { ComponentMenuEmits } from "~/types/emits";
 import type { ComponentMenuProps } from "~/types/props";
 
@@ -34,32 +33,33 @@ const transitionClasses = computed(() => {
         :leave-to-class="transitionClasses.leaveTo"
       >
         <HeadlessMenuItems
-          class="mt-2.5 py-1.5 w-auto absolute text-sm font-medium rounded-lg shadow-[0px_0px_10px_rgba(0,0,0,0.15)] bg-white/85 backdrop-blur-2xl"
+          class="mt-2.5 w-[200px] py-1.5 absolute z-40 text-sm font-medium rounded-lg shadow-[0px_0px_10px_rgba(0,0,0,0.15)] bg-white/85 backdrop-blur-2xl"
           :class="props.position === 'right' ? 'right-4' : 'left-4'"
         >
           <HeadlessMenuItem
             v-if="menuItems.accounts"
             v-slot="{ active }"
-            v-for="menu in menuItems.accounts"
+            v-for="(menu, index) in menuItems.accounts"
+            :key="index"
           >
-            <button
-              class="flex items-center min-w-48 max-w-48 min-h-8 mx-1 w-full py-1 pl-3 pr-1.5"
+            <div
+              class="h-8 mx-1 py-1 pl-3 pr-1.5 flex items-center overflow-hidden cursor-pointer"
               :class="{
                 'bg-lightSecond transition-all duration-200 ease-in-out rounded-md':
                   active,
               }"
               @click="emit('selectMenuItem', menu.call)"
             >
-              <div class="mr-[18px] -ml-0.5 w-6 h-6 max-w-6 max-h-6 flex">
+              <div class="mr-5 -ml-0.5">
                 <UIProfileAvatar
                   :user="user"
-                  :className="'w-6 h-6 text-[0.56rem] ring-1 ring-tg ring-offset-2'"
+                  :class-name="'w-6 h-6 ring-1 ring-tg ring-offset-2 text-[0.56rem]'"
                 />
               </div>
               <span class="w-full text-left flex-auto">
                 {{ menu.name }}
               </span>
-            </button>
+            </div>
           </HeadlessMenuItem>
           <hr
             v-if="
@@ -69,26 +69,27 @@ const transitionClasses = computed(() => {
           />
           <HeadlessMenuItem
             v-slot="{ active }"
-            v-for="menu in menuItems.additionals"
+            v-for="(menu, index) in menuItems.additionals"
+            :key="index"
           >
-            <button
-              class="flex items-center min-w-48 max-w-48 min-h-8 mx-1 w-full py-1 pl-3 pr-1.5"
+            <div
+              class="flex items-center mx-1 h-8 py-1 pl-3 pr-1.5 cursor-pointer"
               :class="{
                 'bg-lightSecond transition-all duration-200 ease-in-out rounded-md':
                   active,
               }"
               @click="emit('selectMenuItem', menu.call)"
             >
-              <span class="mr-5 flex items-center w-6 h-6">
-                <component :is="menu.prefixIcon" class="w-5 h-5" />
+              <span class="mr-5 flex items-center">
+                <component :is="menu.prefixIcon" class="w-6 h-6" />
               </span>
               <span class="w-full text-left flex-auto">
                 {{ menu.name }}
                 <span v-if="menu.suffixIcon" class="ml-2">
-                  <component :is="menu.prefixIcon" class="w-5 h-5" />
+                  <component :is="menu.prefixIcon" class="w-6 h-6" />
                 </span>
               </span>
-            </button>
+            </div>
           </HeadlessMenuItem>
         </HeadlessMenuItems>
       </transition>

@@ -27,6 +27,7 @@ export default {
         primaryIndigo: "rgb(135,116,225)",
         lightSecond: "rgba(112, 117, 121, 0.08)",
         bgColor: "#f4f4f5",
+        lightTg: "rgba(51, 144, 236, 0.08)",
       },
     },
   },

@@ -6,25 +6,30 @@ import {
 } from "@heroicons/vue/24/outline";
 import type { ComponentSidebarEmits } from "~/types/emits";
 import type { ComponentSidebarProps } from "~/types/props";
-import type { User } from "~/types/types";
+import type { UpdateUserFields, User } from "~/types/types";
 
 const props = defineProps<ComponentSidebarProps>();
 const emit = defineEmits<ComponentSidebarEmits>();
+const { updateUser } = useUser();
+const storeUser = useUserStore();
+const user = computed(() => storeUser.user);
 
-const originalForm: User = {
-  full_name: props.user.full_name,
-  msisdn: props.user.msisdn,
-  username: props.user.username,
-  avatar_url: props.user.avatar_url,
-  bio: "",
-};
-const form = reactive<User>({ ...originalForm });
+const originalForm = ref<UpdateUserFields>({
+  full_name: user.value.full_name,
+  msisdn: user.value.msisdn,
+  username: user.value.username,
+  avatar_file: user.value.avatar_url,
+  bio: user.value.bio,
+});
+const form = reactive<UpdateUserFields>({ ...originalForm.value });
 const inputFile = shallowRef<HTMLElement | null>(null);
 const previewAvatar = ref<string | null>(null);
 
 const isFormChanged = computed(() =>
   Object.keys(form).some(
-    (key) => form[key as keyof User] !== originalForm[key as keyof User]
+    (key) =>
+      form[key as keyof UpdateUserFields] !==
+      originalForm.value[key as keyof UpdateUserFields]
   )
 );
 
@@ -47,8 +52,27 @@ const processFile = (fileItem: File) => {
   });
 
   previewAvatar.value = URL.createObjectURL(fileItem);
-  form.avatar_url = newFile;
+  form.avatar_file = newFile;
 };
+
+const { submit, inProgress, ValidationErrors, error } = useSubmit(
+  async () => {
+    return await updateUser(user.value.id, form);
+  },
+  {
+    onSuccess: (res) => {
+      storeUser.updateUser(res);
+      originalForm.value = {
+        full_name: user.value.full_name,
+        msisdn: user.value.msisdn,
+        username: user.value.username,
+        avatar_file: user.value.avatar_url,
+        bio: user.value.bio,
+      };
+    },
+    onError: () => {},
+  }
+);
 </script>
 
 <template>
@@ -95,12 +119,14 @@ const processFile = (fileItem: File) => {
           <UIFormAnimateInput
             v-model="form.full_name"
             :name="'text'"
+            :type="'text'"
             :label="'Name'"
             :validation="''"
           />
           <UIFormAnimateInput
             v-model="form.bio"
-            :name="'text'"
+            :name="'textarea'"
+            :type="'textarea'"
             :label="'Bio (optional)'"
             :validation="''"
           />
@@ -120,6 +146,7 @@ const processFile = (fileItem: File) => {
           <UIFormAnimateInput
             v-model="form.username"
             :name="'text'"
+            :type="'text'"
             :label="'Username (optional)'"
             :validation="''"
           />
@@ -143,7 +170,10 @@ const processFile = (fileItem: File) => {
       leave-to-class="opacity-0 translate-y-full"
     >
       <div v-if="isFormChanged" class="absolute bottom-5 right-5">
-        <UIButton :class-name="'w-14 h-14 bg-tg hover:bg-darkTg'">
+        <UIButton
+          :class-name="'w-14 h-14 bg-tg hover:bg-darkTg'"
+          @on-click="submit"
+        >
           <span class="text-2xl text-white">✓</span>
         </UIButton>
       </div>

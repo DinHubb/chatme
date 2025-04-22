@@ -2,8 +2,16 @@
 const props = defineProps<{
   className: string;
 }>();
+const emit = defineEmits<{
+  onClick: [];
+}>();
 
 const { createRipple } = useRipple();
+
+function onClick(event: MouseEvent) {
+  createRipple(event);
+  emit("onClick");
+}
 </script>
 <template>
   <button
@@ -11,7 +19,7 @@ const { createRipple } = useRipple();
       'relative inline-block overflow-hidden rounded-full focus:outline-none outline-none transition-all duration-200 ease-out',
       className,
     ]"
-    @click="createRipple"
+    @click="onClick($event)"
   >
     <slot></slot>
   </button>
