@@ -55,8 +55,6 @@ const store = useUserStore();
 
 const { user } = storeToRefs(store);
 
-onMounted(() => {});
-
 const handleSelectChat = (event: Chat) => {
   if (!user.value) return;
 

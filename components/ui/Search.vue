@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { MagnifyingGlassIcon } from "@heroicons/vue/24/solid";
+
+const emit = defineEmits<{
+  focused: [value: void];
+}>();
 </script>
 <template>
   <div class="relative w-full flex items-center">
@@ -7,6 +11,7 @@ import { MagnifyingGlassIcon } from "@heroicons/vue/24/solid";
       type="text"
       class="search__input rounded-3xl w-full transition-colors duration-200 ease-in-out border border-brcolor hover:border-hvBrcolor focus:!border-tg focus:border-2 h-[42px] pr-4 pl-14"
       placeholder="Search"
+      @focus="emit('focused')"
     />
     <div
       class="search__container__icon absolute left-4 w-6 h-6 pointer-events-none"

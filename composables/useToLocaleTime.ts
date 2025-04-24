@@ -1,6 +1,8 @@
 export const useToLocaleTime = () => {
   function toLocaleTime(timestamp: string | undefined) {
-    const date = new Date(Number(timestamp));
+    if (!timestamp) return "Unknown";
+
+    const date = new Date(timestamp);
 
     const options: Intl.DateTimeFormatOptions = {
       hour: "2-digit",
@@ -8,7 +10,7 @@ export const useToLocaleTime = () => {
       hour12: true,
     };
 
-    return new Date(date).toLocaleTimeString("en-US", options);
+    return date.toLocaleTimeString("en-US", options);
   }
 
   return {

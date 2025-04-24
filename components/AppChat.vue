@@ -4,37 +4,43 @@ import {
   PhoneIcon,
   EllipsisVerticalIcon,
 } from "@heroicons/vue/24/outline";
-import type { Message, Chat, UserChat } from "~/types/types";
+import type { Message, Chat, SendMessage } from "~/types/types";
 
 const props = defineProps<{
   chat: Chat;
 }>();
 const emit = defineEmits(["createMessage"]);
-const store = useUserStore();
+const { user } = useUserStore();
 const { toLocaleTime } = useToLocaleTime();
+const { sendMessage } = useChats();
 
-const message = ref<Message>({ sub: "", message: "", createdAt: "" });
-const messagesContainer = ref<HTMLDivElement | null>(null);
+const message = reactive<SendMessage>({
+  sender_id: user.id,
+  content: "",
+  chat_id: props.chat.chat_id,
+});
+// const messagesContainer = ref<HTMLDivElement | null>(null);
 
-const onCreateMessage = () => {
-  if (!message.value.message.trim()) return;
+// const scrollToBottom = () => {
+//   if (messagesContainer.value) {
+//     messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+//   }
+// };
 
-  message.value.sub = store.user.sub;
-  message.value.createdAt = `${Date.now()}`;
+// onBeforeMount(() => nextTick(scrollToBottom));
+// onUpdated(() => nextTick(scrollToBottom));
 
-  let newMessage = message.value;
-  store.createMessage(newMessage);
-  message.value = { sub: "", message: "", createdAt: "" };
-};
-
-const scrollToBottom = () => {
-  if (messagesContainer.value) {
-    messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+const { submit, inProgress, ValidationErrors, error } = useSubmit(
+  async () => {
+    return sendMessage(message);
+  },
+  {
+    onSuccess: (res) => {
+      message.content = "";
+    },
+    onError: () => {},
   }
-};
-
-onBeforeMount(() => nextTick(scrollToBottom));
-onUpdated(() => nextTick(scrollToBottom));
+);
 </script>
 <template>
   <div class="bg-white relative shadow z-10 w-full py-2">
@@ -43,13 +49,18 @@ onUpdated(() => nextTick(scrollToBottom));
         <div
           class="relative shadow w-11 h-11 min-w-11 min-h-11 rounded-full overflow-hidden"
         >
-          <img :src="chat?.user.avatar" alt="" class="object-cover" />
+          <UIProfileAvatar
+            :user="chat.participant"
+            :class-name="'w-full h-full'"
+          />
         </div>
         <div>
           <h4 class="text-primary font-medium text-base">
-            {{ chat?.user.fullName }}
+            {{ chat.participant.username }}
           </h4>
-          <p class="text-sm text-secondary">{{ "last seen" }}</p>
+          <p class="text-sm text-secondary">
+            {{ toLocaleTime(chat.participant.lastseen) }}
+          </p>
         </div>
       </div>
       <div class="flex items-center space-x-3">
@@ -86,27 +97,24 @@ onUpdated(() => nextTick(scrollToBottom));
         v-for="(message, idx) in chat?.messages"
         :class="[
           'relative px-2 pt-1 pb-[5px] max-w-[464px] my-1 flex',
-          message.sub === chat?.user.sub
+          message.sender_id !== user.id
             ? 'self-start bg-white'
             : 'self-end bg-messageBg',
-          message.message.length > 46 ? 'rounded-[15px]' : 'rounded-full ',
+          message.content.length > 46 ? 'rounded-[15px]' : 'rounded-full ',
         ]"
       >
         <p class="leading-5 whitespace-pre-wrap break-words break-all">
-          {{ message.message }}
+          {{ message.content }}
         </p>
         <span class="self-end pl-1 leading-none text-nowrap text-xs">{{
-          toLocaleTime(message.createdAt)
+          toLocaleTime(message.sent_at)
         }}</span>
       </li>
     </ul>
   </div>
   <div class="flex items-center px-20 pt-1 gap-2">
-    <UIInput :message="message" @keyup.enter="onCreateMessage" />
-    <UIButton
-      :class-name="'p-4 bg-tg hover:bg-darkTg'"
-      @click="onCreateMessage"
-    >
+    <UIInput :message="message" @keyup.enter="submit" />
+    <UIButton :class-name="'p-4 bg-tg hover:bg-darkTg'" @click="submit">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
