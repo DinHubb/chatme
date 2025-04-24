@@ -3,7 +3,7 @@ import { FaceSmileIcon } from "@heroicons/vue/24/outline";
 import type { Message } from "~/types/types";
 
 const props = defineProps<{
-  message: Message;
+  message: any;
 }>();
 </script>
 <template>
@@ -17,9 +17,9 @@ const props = defineProps<{
         <FaceSmileIcon class="w-7 h-7 stroke-secondary" />
       </button>
       <input
-        v-model="message.message"
+        v-model="message.content"
         type="text"
-        class="w-full placeholder:pl-0.5 bg-transparent focus:outline-none px-2 caret-tg"
+        class="w-full h-full placeholder:pl-0.5 bg-transparent focus:outline-none px-2 caret-tg"
         placeholder="Message"
         name=""
         id=""

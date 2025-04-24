@@ -13,6 +13,7 @@
     "@formkit/nuxt": "^1.6.9",
     "@heroicons/vue": "^2.2.0",
     "@pinia/nuxt": "^0.9.0",
+    "dayjs-nuxt": "^2.1.11",
     "nuxt": "^3.14.1592",
     "pinia": "^2.3.1",
     "vue": "latest",

@@ -1,45 +1,39 @@
-export type User = {
-  name: string;
-  login?: string;
+export type LoginCredentials = {
+  login: string;
+  password: string;
 };
 
-export type loginCredentials = {
+export type RegisterCredentials = {
+  username: string;
   msisdn: string;
   password: string;
 };
 
-export type registerCredentials = {
-  name: string;
-  msisdn: string;
-};
-
-// Value is initialized in: ~/plugins/auth.ts
-export const useUser = () => {
-  return useState<User | undefined | null>("user", () => undefined);
-};
-
 export const useAuth = () => {
-  const user = useUser();
-  const isLoggedIn = computed(() => !!user.value);
+  const storeUser = useUserStore();
+  const router = useRouter();
 
   async function refresh() {
     try {
-      user.value = await fetchCurrentUser();
+      const response = await $jwtFetch("/auth/me", {
+        method: "GET",
+      });
+
+      storeUser.setUser(response);
     } catch (error: any) {
-      user.value = null;
+      if (
+        router.currentRoute.value.fullPath !== "/login" &&
+        router.currentRoute.value.fullPath !== "/register"
+      ) {
+        logout();
+      }
     }
   }
 
-  async function login(credentials: loginCredentials) {
-    if (isLoggedIn.value) return;
+  async function login(credentials: LoginCredentials) {
+    if (storeUser.isLoggedIn) return;
 
-    await $jwtFetch("/auth/login", { method: "POST", body: credentials });
-
-    await refresh();
-  }
-
-  async function register(credentials: registerCredentials) {
-    await $jwtFetch("/auth/reset-password", {
+    await $jwtFetch("/auth/login", {
       method: "POST",
       body: credentials,
     });
@@ -47,25 +41,24 @@ export const useAuth = () => {
     await refresh();
   }
 
-  async function logout() {
-    if (!isLoggedIn.value) return;
+  async function register(credentials: RegisterCredentials) {
+    await $jwtFetch("/auth/register", {
+      method: "POST",
+      body: credentials,
+    });
 
-    await $jwtFetch("/auth/logout", { method: "post" });
-    user.value = null;
+    await refresh();
+  }
+
+  function logout() {
+    storeUser.clearUser();
+    router.push("/login");
   }
 
   return {
-    user,
-    isLoggedIn,
     register,
     login,
-    logout,
     refresh,
+    logout,
   };
-};
-
-export const fetchCurrentUser = async () => {
-  return await $jwtFetch<User>("/auth/me", {
-    redirectIfNotAuthenticated: false,
-  });
 };

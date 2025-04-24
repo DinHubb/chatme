@@ -1,5 +1,8 @@
 export default defineNuxtRouteMiddleware(async () => {
-  const user = useUser();
+  const useStore = useUserStore();
 
-  // if (!user.value) return navigateTo("/login", { replace: true });
+  // Check logged when the middleware runs
+  useStore.checkLogged();
+
+  if (!useStore.isLoggedIn) return navigateTo("/login", { replace: true });
 });
