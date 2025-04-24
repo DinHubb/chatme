@@ -32,6 +32,12 @@ export const useUserStore = defineStore("user", () => {
     user.value = { ...user.value, ...updatedUser };
   };
 
+  const setChatsToUserChats = (chat: Chat[]) => {
+    if (!chat.length) return;
+
+    user.value.chats = chat;
+  };
+
   const setCurrentChat = (chat: Chat) => {
     user.value.currentChat = chat;
   };
@@ -58,6 +64,7 @@ export const useUserStore = defineStore("user", () => {
     setUser,
     checkLogged,
     updateUser,
+    setChatsToUserChats,
     setCurrentChat,
     clearUser,
   };

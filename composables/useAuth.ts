@@ -19,9 +19,7 @@ export const useAuth = () => {
         method: "GET",
       });
 
-      if (response) {
-        storeUser.setUser(response);
-      }
+      storeUser.setUser(response);
     } catch (error: any) {
       if (
         router.currentRoute.value.fullPath !== "/login" &&

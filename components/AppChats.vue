@@ -5,19 +5,21 @@ import type { CallMenu, MenuItem, MenuItems } from "~/types/menu";
 import { CogIcon, EllipsisVerticalIcon } from "@heroicons/vue/20/solid";
 import { Bars3Icon } from "@heroicons/vue/24/solid";
 import AppSetting from "./AppSetting.vue";
-import type { Component } from "vue";
-
-const { toLocaleTime } = useToLocaleTime();
-const { createRipple } = useRipple();
+import { ArrowLeftIcon } from "@heroicons/vue/24/outline";
+import type { Chat, User, UserInfo } from "~/types/types";
 
 const props = defineProps<ComponentSidebarProps>();
 const emit = defineEmits<ComponentSidebarEmits>();
+const { user, setChatsToUserChats, setCurrentChat } = useUserStore();
+const { getChats, createChat } = useChats();
+const { toLocaleTime } = useToLocaleTime();
+const route = useRoute();
 
 const menuItems: MenuItems = {
   accounts: [
     {
-      name: props.user?.username,
-      avatar: props.user?.avatar,
+      name: user.username,
+      avatar: user.avatar_url,
       call: AppSetting,
     },
   ],
@@ -36,18 +38,48 @@ const menuItems: MenuItems = {
     },
   ],
 };
+const isOpenSearchBar = ref<boolean>(false);
 
 const handleSelectMenuItem = (menuItem: CallMenu) => {
   if (!menuItem) return;
   emit("next", menuItem);
+};
+
+const { submit, inProgress, ValidationErrors, error } = useSubmit(
+  async () => {
+    return getChats(user.id);
+  },
+  {
+    onSuccess: (res) => {
+      setChatsToUserChats(res);
+
+      if (route.query?.chat) {
+        handleSelectChat(route.query.chat as string);
+      }
+    },
+    onError: () => {},
+  }
+);
+
+onMounted(() => submit());
+
+const handleSelectChat = (value: any) => {
+  const id = value?.participant?.id ?? value;
+
+  useSubmit(() => createChat(user.id, id), {
+    onSuccess: (res) => {
+      setCurrentChat(res);
+    },
+  }).submit();
 };
 </script>
 
 <template>
   <div class="absolute w-full bg-white h-full">
     <div class="bg-white z-10 px-4 py-2">
-      <div class="flex items-center space-x-4">
+      <div class="flex justify-start items-center space-x-4">
         <UIMenu
+          v-if="!isOpenSearchBar"
           :user="user"
           :menu-items="menuItems"
           :position="'left'"
@@ -59,21 +91,37 @@ const handleSelectMenuItem = (menuItem: CallMenu) => {
             </UIButton>
           </template>
         </UIMenu>
-        <UISearch />
+        <button
+          v-else
+          class="p-2 rounded-full hover:bg-hgray transition-all duration-200 ease-out"
+          @click="isOpenSearchBar = false"
+        >
+          <ArrowLeftIcon class="w-6 h-6 stroke-2 stroke-secondary" />
+        </button>
+        <UISearch @focused="isOpenSearchBar = true" />
       </div>
     </div>
-    <ul class="flex flex-col w-full p-2 max-h-[calc(100vh-50px)] overflow-auto">
-      <li
-        v-for="chat in user.chats"
-        class="flex relative overflow-hidden"
-        @click="createRipple"
+    <Transition
+      enter-active-class="transition-all duration-100 ease-out"
+      enter-from-class="opacity-0 -translate-y-2 scale-90"
+      enter-to-class="opacity-100 translate-y-0 scale-100"
+      leave-active-class="transition-all duration-100 ease-in"
+      leave-from-class="opacity-100 translate-y-0 scale-100"
+      leave-to-class="opacity-0 -translate-y-2 scale-90"
+      mode="out-in"
+    >
+      <UISidebarList
+        v-if="!isOpenSearchBar"
+        :data="user.chats"
+        @select-chat="handleSelectChat"
+        v-slot="{ item }: { item: Chat }"
       >
         <NuxtLink
-          class="w-full p-2 rounded-xl"
-          :to="`#${chat.id}`"
-          :data-peer-id="chat.id"
+          class="w-full p-2 rounded-xl select-none"
+          :to="`?chat=${item?.participant.id}`"
+          :data-peer-id="item?.chat_id"
           :class="[
-            user.currentChat?.user.username === chat.user.username
+            item.chat_id === user.currentChat?.chat_id
               ? 'bg-tg'
               : 'hover:bg-hgray',
           ]"
@@ -82,10 +130,9 @@ const handleSelectMenuItem = (menuItem: CallMenu) => {
             <div
               class="relative shadow bg-none w-[3.375rem] h-[3.375rem] min-w-[3.375rem] min-h-[3.375rem] rounded-full overflow-hidden"
             >
-              <img
-                :src="chat.user.avatar"
-                alt=""
-                class="object-contain min-w-full min-h-full w-full h-full bg-white"
+              <UIProfileAvatar
+                :user="item.participant"
+                :class-name="'object-contain min-w-full min-h-full w-full h-full bg-white'"
               />
             </div>
             <div class="w-full flex justify-between space-x-2">
@@ -94,38 +141,34 @@ const handleSelectMenuItem = (menuItem: CallMenu) => {
                   class="text-primary font-medium text-base"
                   :class="{
                     'text-white font-normal':
-                      user.currentChat?.user.username === chat.user.username,
+                      item.chat_id === user.currentChat?.chat_id,
                   }"
                 >
-                  {{ chat.user.fullName }}
+                  {{ item.participant.username }}
                 </h4>
                 <p
-                  class="text-sm text-secondary mt-1"
+                  class="text-sm text-secondary mt-0.5"
                   :class="{
-                    'text-white':
-                      user.currentChat?.user.username === chat.user.username,
+                    'text-white': item.chat_id === user.currentChat?.chat_id,
                   }"
                 >
-                  {{ chat.messages[chat.messages.length - 1].message }}
+                  {{ item?.last_message?.content }}
                 </p>
               </div>
               <p
                 class="text-xs text-secondary"
                 :class="{
-                  'text-white':
-                    user.currentChat?.user.username === chat.user.username,
+                  'text-white': item.chat_id === user.currentChat?.chat_id,
                 }"
               >
-                {{
-                  toLocaleTime(
-                    chat.messages[chat.messages.length - 1].createdAt
-                  )
-                }}
+                {{ toLocaleTime(item.participant.lastseen) }}
               </p>
             </div>
           </div>
         </NuxtLink>
-      </li>
-    </ul>
+      </UISidebarList>
+
+      <AppSearchBar v-else @select="() => (isOpenSearchBar = false)" />
+    </Transition>
   </div>
 </template>

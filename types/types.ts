@@ -3,36 +3,29 @@ export interface Message {
   chat_id: string;
   sender_id: string;
   content: string;
-  type: "text" | "image" | "video" | "audio" | "file" | "sticker" | "system";
-  media_url?: string;
-  replied_to_message_id?: string;
-  isEdited: boolean;
-  sentAt: string;
-  deliveredAt?: string;
-  readBy: string[];
-  reactions?: { [emoji: string]: string[] };
+  sent_at: string;
+  delivered_at: string;
+  replied_to_message_id: string;
+  is_edited: string;
 }
 
 export interface User {
+  id?: string;
   username: string;
   full_name: string;
   avatar_url: string;
   msisdn: string;
   bio?: string;
+  lastseen?: string;
 }
 
 export interface Chat {
-  id: string;
-  type: "private" | "group" | "channel";
-  name?: string;
-  avatar_url?: string;
-  participants: User[];
-  admins?: string[];
-  messages: Message[];
-  lastMessageId?: string;
-  pinnedMessageId?: string;
-  createdAt: string;
-  updatedAt: string;
+  chat_id: string;
+  participant: User | any;
+  messages?: Message[];
+  last_message?: Message;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface UserInfo {
@@ -62,4 +55,10 @@ export interface UpdateUserFields {
   avatar_file: File | string;
   msisdn: string;
   bio: string;
+}
+
+export interface SendMessage {
+  chat_id: string;
+  sender_id: string;
+  content: string;
 }

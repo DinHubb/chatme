@@ -33,7 +33,7 @@ const handleNext = (component: ComponentType) => {
 </script>
 <template>
   <aside
-    class="relative max-w-[420px] w-full h-full overflow-hidden border-r bg-bgColor border-brcolor"
+    class="relative select-none max-w-[420px] w-full h-full overflow-hidden border-r bg-bgColor border-brcolor"
   >
     <Transition :name="transitionName">
       <component

@@ -21,7 +21,7 @@ const props = defineProps<{
   </div>
   <div
     v-else
-    class="flex justify-center items-center font-medium bg-gradient-to-b uppercase text-white from-[#5CAFFA] to-[#408ACF] rounded-full overflow-hidden"
+    class="flex justify-center items-center font-medium bg-gradient-to-b uppercase text-white from-[#5CAFFA] to-[#408ACF] rounded-full overflow-hidden select-none"
     :class="className"
     :style="{
       '--color-top': '#7cb7f2',
