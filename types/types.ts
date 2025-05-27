@@ -1,12 +1,12 @@
 export interface Message {
-  id: string;
+  id?: string;
   chat_id: string;
   sender_id: string;
   content: string;
   sent_at: string;
-  delivered_at: string;
-  replied_to_message_id: string;
-  is_edited: string;
+  delivered_at?: string;
+  replied_to_message_id?: string;
+  is_edited?: string;
 }
 
 export interface User {

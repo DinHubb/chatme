@@ -13,13 +13,20 @@ const emit = defineEmits(["createMessage"]);
 const { user } = useUserStore();
 const { toLocaleTime } = useToLocaleTime();
 const { sendMessage } = useChats();
+const { emitMessage, listen, isConnected } = useSocketStore();
 
 const message = reactive<SendMessage>({
   sender_id: user.id,
   content: "",
   chat_id: props.chat.chat_id,
 });
-// const messagesContainer = ref<HTMLDivElement | null>(null);
+const messagesContainer = ref<HTMLDivElement | null>(null);
+
+onMounted(() => {
+  messagesContainer.value?.lastElementChild?.scrollIntoView({
+    block: "end",
+  });
+});
 
 // const scrollToBottom = () => {
 //   if (messagesContainer.value) {
@@ -32,11 +39,17 @@ const message = reactive<SendMessage>({
 
 const { submit, inProgress, ValidationErrors, error } = useSubmit(
   async () => {
-    return sendMessage(message);
+    emitMessage("message", message);
   },
   {
     onSuccess: (res) => {
+      user.currentChat?.messages?.push({ ...message, sent_at: "" });
+      messagesContainer.value?.lastElementChild?.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
       message.content = "";
+      listen("message", (msg: Message) => {});
     },
     onError: () => {},
   }

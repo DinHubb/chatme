@@ -60,6 +60,7 @@ export default defineNuxtConfig({
     public: {
       apiBase: process.env.NUXT_API_BASE,
       urlBase: process.env.NUXT_URL_BASE,
+      SOCKET_URL: process.env.NUXT_SOCKET_URL,
     },
   },
 });

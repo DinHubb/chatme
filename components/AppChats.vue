@@ -13,6 +13,7 @@ const emit = defineEmits<ComponentSidebarEmits>();
 const { user, setChatsToUserChats, setCurrentChat } = useUserStore();
 const { getChats, createChat } = useChats();
 const { toLocaleTime } = useToLocaleTime();
+const { emitMessage, listen, isConnected } = useSocketStore();
 const route = useRoute();
 
 const menuItems: MenuItems = {
@@ -69,6 +70,7 @@ const handleSelectChat = (value: any) => {
   useSubmit(() => createChat(user.id, id), {
     onSuccess: (res) => {
       setCurrentChat(res);
+      emitMessage("joinRoom", { chat_id: res.chat_id });
     },
   }).submit();
 };
